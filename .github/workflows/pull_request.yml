@@ -1,9 +1,8 @@
 on: [pull_request]
+
 jobs:
   basic-checks:
     runs-on: ubuntu-latest
-    env:
-      working-directory: .
     name: Basic Checks
     steps:
       - name: Check out repository
@@ -17,11 +16,27 @@ jobs:
 
       - name: Terraform init
         run: terraform init
-        working-directory: ${{ env.working-directory }}
 
       - name: Terraform validate
         run: terraform validate
-        working-directory: ${{ env.working-directory }}
       
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
+
+  checkov:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: Run Checkov
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform
