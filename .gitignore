@@ -1,2 +1,4 @@
 .infracost
 .terraform
+*.tfstate
+*.tfstate*

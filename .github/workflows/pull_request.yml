@@ -1,0 +1,22 @@
+on: [pull_request]
+jobs:
+  basic-checks:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: .
+    name: Basic Checks
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform validate
+        run: terraform validate
+        working-directory: ${{ env.working-directory }}
+      
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
