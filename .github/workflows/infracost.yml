@@ -4,16 +4,27 @@ jobs:
     runs-on: ubuntu-latest
     env:
       working-directory: .
-
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     name: Run Infracost
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
 
       - name: Install terraform
-        uses: hashicorp/setup-terraform@v1
+        uses: hashicorp/setup-terraform@v2
         with:
           terraform_wrapper: false
+          terraform_version: 1.1.7
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: eu-west-1
+          role-to-assume: arn:aws:iam::026569114733:role/test-github-actions-role
+          role-session-name: MySessionName
 
       - name: Terraform init
         run: terraform init
